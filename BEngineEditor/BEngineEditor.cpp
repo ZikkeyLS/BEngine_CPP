@@ -7,6 +7,7 @@ int main()
 {
 	cout << "Hello CMake." << endl;
 	cout << BEngine::add(10220, 100) << endl;
-	cin.get();
+
+	BEngine::test();
 	return 0;
 }
