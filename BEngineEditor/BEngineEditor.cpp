@@ -9,5 +9,6 @@ int main()
 	cout << BEngine::add(10220, 100) << endl;
 
 	BEngine::test();
+	BEngine::untest();
 	return 0;
 }

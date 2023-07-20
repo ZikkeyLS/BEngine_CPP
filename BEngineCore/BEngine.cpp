@@ -45,3 +45,8 @@ int BEngine::test()
     glfwTerminate();
     return 0;
 }
+
+void BEngine::untest()
+{
+    ScriptEngine::Shutdown();
+}

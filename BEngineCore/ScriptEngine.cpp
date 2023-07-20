@@ -88,15 +88,16 @@ namespace BEngine {
 	void ScriptEngine::Initialize()
 	{
 		s_Data = new ScriptEngineData();
-		InitMono();
+		InitializeMono();
 	}
 
 	void ScriptEngine::Shutdown()
 	{
+		ShutdownMono();
 		delete s_Data;
 	}
 
-	void ScriptEngine::InitMono()
+	void ScriptEngine::InitializeMono()
 	{
 		mono_set_assemblies_path("libs");
 
@@ -113,10 +114,31 @@ namespace BEngine {
 
 		s_Data->CoreAssembly = LoadCSharpAssembly("BEngineScriptCore.dll");
 		PrintAssemblyTypes(s_Data->CoreAssembly);
+
+		// create test object
+		MonoImage* assemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
+		MonoClass* testClass = mono_class_from_name(assemblyImage, "BEngine", "Main");
+
+		MonoObject* testObject = mono_object_new(s_Data->AppDomain, testClass);
+		mono_runtime_object_init(testObject);
+
+		MonoMethod* testPrintMessage = mono_class_get_method_from_name(testClass, "PrintMessage", 0);
+		mono_runtime_invoke(testPrintMessage, testObject, nullptr, nullptr);
+
+		MonoMethod* testPrintCustomMessage = mono_class_get_method_from_name(testClass, "PrintCustomMessage", 1);
+
+		MonoString* value = mono_string_new(s_Data->AppDomain, "Hello World From C++!");
+		void* stringValue = value;
+
+		mono_runtime_invoke(testPrintCustomMessage, testObject, &stringValue, nullptr);
 	}
 
 	void ScriptEngine::ShutdownMono()
 	{
+		mono_domain_unload(s_Data->AppDomain);
+		s_Data->AppDomain = nullptr;
 
+		mono_jit_cleanup(s_Data->RootDomain);
+		s_Data->RootDomain = nullptr;
 	}
 }

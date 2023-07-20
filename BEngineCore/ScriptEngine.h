@@ -6,7 +6,7 @@ namespace BEngine {
 		static void Initialize();
 		static void Shutdown();
 	private:
-		static void InitMono();
+		static void InitializeMono();
 		static void ShutdownMono();
 	};
 }
