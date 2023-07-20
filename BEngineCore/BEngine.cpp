@@ -2,6 +2,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include <iostream>
+#include <ScriptEngine.h>
 
 int BEngine::add(int a, int b)
 {
@@ -10,6 +11,7 @@ int BEngine::add(int a, int b)
 
 int BEngine::test()
 {
+    ScriptEngine::Initialize();
     GLFWwindow* window;
 
     if (!glfwInit())

@@ -1,6 +1,5 @@
 ﻿#include "BEngineEditor.h"
 #include "BEngine.h"
-#include <libloaderapi.h>
 
 using namespace std;
 
