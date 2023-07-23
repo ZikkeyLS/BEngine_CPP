@@ -2,8 +2,6 @@
 #include "BEngine.h"
 #include <filesystem>
 
-using namespace std;
-
 #ifndef NDEBUG
 #include <string>
 #include <windows.h>
@@ -17,10 +15,12 @@ std::string getpath()
 }
 #endif
 
+using namespace std;
+
 int main()
 {
 #ifndef NDEBUG
-	const std::string& path = getpath();
+	std::string path = getpath();
 	if (std::filesystem::current_path() != path)
 		std::filesystem::current_path(path);;
 #endif
