@@ -4,10 +4,25 @@
 
 using namespace std;
 
+#ifndef NDEBUG
+#include <string>
+#include <windows.h>
+
+std::string getpath()
+{
+	char result[MAX_PATH];
+	std::string path = std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
+	size_t pos = path.find_last_of("\\/");
+	return (std::string::npos == pos) ? "" : path.substr(0, pos);
+}
+#endif
+
 int main()
 {
 #ifndef NDEBUG
-	std::filesystem::current_path("../Debug");
+	const std::string& path = getpath();
+	if (std::filesystem::current_path() != path)
+		std::filesystem::current_path(path);;
 #endif
 
 	cout << "Hello CMake." << endl;
