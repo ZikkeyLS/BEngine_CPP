@@ -2,6 +2,10 @@
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include <fstream>
+#include <iostream>
+#include <iomanip>
+#include "glm/vec3.hpp"
+#include <BEngine.h>
 
 namespace BEngine {
 
@@ -61,6 +65,7 @@ namespace BEngine {
 		MonoAssembly* assembly = mono_assembly_load_from_full(image, assemblyPath.c_str(), &status, 0);
 		mono_image_close(image);
 
+		BE_INFO("Welcome!");
 		// Don't forget to free the file data
 		delete[] fileData;
 
@@ -97,6 +102,19 @@ namespace BEngine {
 		delete s_Data;
 	}
 
+	static void Log(MonoString* message) {
+		auto t = std::time(nullptr);
+		auto tm = *std::localtime(&t);
+		std::cout << "[LOG] [" << std::put_time(&tm, "%H:%M:%S") << "] " << mono_string_to_utf8(message) << std::endl;
+	}
+
+	static void LogVector(glm::vec3* vector) 
+	{
+		auto t = std::time(nullptr);
+		auto tm = *std::localtime(&t);
+		BE_INFO("Vector3 [{0}; {1}; {2}]", vector->x, vector->y, vector->z);
+	}
+
 	void ScriptEngine::InitializeMono()
 	{
 		mono_set_assemblies_path("libs");
@@ -111,6 +129,9 @@ namespace BEngine {
 		s_Data->AppDomain = mono_domain_create_appdomain("BEngineScriptRuntime", nullptr);
 
 		mono_domain_set(s_Data->AppDomain, true);
+
+		mono_add_internal_call("BEngine.Main::Log", Log);
+		mono_add_internal_call("BEngine.Main::LogVector", LogVector);
 
 		s_Data->CoreAssembly = LoadCSharpAssembly("BEngineScriptCore.dll");
 		PrintAssemblyTypes(s_Data->CoreAssembly);

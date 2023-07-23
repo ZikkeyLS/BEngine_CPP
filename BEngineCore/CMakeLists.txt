@@ -27,3 +27,5 @@ endif ()
 
 target_link_libraries(BEngineCore glad)
 target_link_libraries(BEngineCore glfw)
+target_link_libraries(BEngineCore glm)
+target_link_libraries(BEngineCore spdlog)

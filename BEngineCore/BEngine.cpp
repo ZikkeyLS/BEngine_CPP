@@ -13,6 +13,7 @@ int BEngine::test()
 {
     ScriptEngine::Initialize();
     GLFWwindow* window;
+    BE_ASSERT(true);
 
     if (!glfwInit())
         return -1;
