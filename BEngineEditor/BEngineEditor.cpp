@@ -22,7 +22,7 @@ int main()
 #ifndef NDEBUG
 	std::string path = getpath();
 	if (std::filesystem::current_path() != path)
-		std::filesystem::current_path(path);;
+		std::filesystem::current_path(path);
 #endif
 
 	cout << "Hello CMake." << endl;
