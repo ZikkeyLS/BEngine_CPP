@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Globalization;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace BEngine
@@ -13,35 +14,36 @@ namespace BEngine
             this.y = y;
             this.z = z;
         }
+
+        public override string ToString()
+        {
+            string vectorX = string.Format(CultureInfo.InvariantCulture, "{0:F2}", x);
+            string vectorY = string.Format(CultureInfo.InvariantCulture, "{0:F2}", y);
+            string vectorZ = string.Format(CultureInfo.InvariantCulture, "{0:F2}", z);
+
+            return $"Vector3 ({vectorX};{vectorY};{vectorZ})";
+        }
     }
 
-    public class Main
+    public class Logger
     {
-        public float FloatVar { get; set; }
-
-        public Main()
+        public static void Print(Vector3 vector)
         {
-            Console.WriteLine("Main constructor");
-            Log("From C# to C++ Log func lightweight babyyyyy");
-
-            Vector3 position = new Vector3(1, 2, 3);
-            LogVector(ref position);
+            InternalCalls.Log(vector.ToString());
         }
+    }
 
-        public void PrintMessage()
-        {
-            Console.WriteLine("Hello World from C#!");
-        }
-
-        public void PrintCustomMessage(string message)
-        {
-            Console.WriteLine($"Message from C#: {message}");
-        }
-
+    internal class InternalCalls
+    {
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void Log(string message);
+    }
 
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void LogVector(ref Vector3 vector);
+    public class Entity
+    {
+        public void PrintVector()
+        {
+            Logger.Print(new Vector3(0, 2, 3.4f));
+        }
     }
 }

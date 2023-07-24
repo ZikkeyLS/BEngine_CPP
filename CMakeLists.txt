@@ -12,8 +12,8 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(BEngineCore)
-add_subdirectory(BEngineEditor)
 add_subdirectory(BEngineScriptCore)
+add_subdirectory(BEngineEditor)
 
 add_subdirectory(external/glfw)
 add_subdirectory(external/glad)

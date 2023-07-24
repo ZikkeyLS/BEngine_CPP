@@ -1,6 +1,15 @@
 ﻿#pragma once
 #include <cassert>
 #include "spdlog/spdlog.h"
+#include "mono/jit/jit.h"
+#include <ctime>
+#include <iostream>
+#include <filesystem>
+#include "mono/jit/jit.h"
+#include "mono/metadata/assembly.h"
+#include <fstream>
+#include <iostream>
+#include "glm/vec3.hpp"
 
 #define BE_ASSERT assert
 #define BE_LOG( ... ) ::spdlog::log(__VA_ARGS__)
