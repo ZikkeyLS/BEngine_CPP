@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System;
 using System.Runtime.CompilerServices;
 
 namespace BEngine
@@ -44,6 +43,14 @@ namespace BEngine
         public void PrintVector()
         {
             Logger.Print(new Vector3(0, 2, 3.4f));
+        }
+    }
+
+    public class Test : Entity
+    {
+        public void Start()
+        {
+            PrintVector();
         }
     }
 }
