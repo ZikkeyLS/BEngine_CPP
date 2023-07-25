@@ -104,7 +104,6 @@ namespace BEngine {
 
 		ScriptGlue::Register();
 
-
 		//MonoObject* instance = s_Data->EntityClass.Instantiate();
 		//MonoMethod* printVector = s_Data->EntityClass.GetMethod("PrintVector", 0);
 		//s_Data->EntityClass.Invoke(instance, printVector, nullptr);
@@ -166,9 +165,13 @@ namespace BEngine {
 
 	void ScriptEngine::ShutdownMono()
 	{
+		mono_domain_set(s_Data->RootDomain, true);
 		mono_domain_unload(s_Data->AppDomain);
+		mono_runtime_set_shutting_down();
 		s_Data->AppDomain = nullptr;
 
+		mono_domain_finalize(mono_get_root_domain(), 0);
+		// mono_runtime_cleanup(mono_get_root_domain()); Можно использовать без jit_cleanup.
 		mono_jit_cleanup(s_Data->RootDomain);
 		s_Data->RootDomain = nullptr;
 	}

@@ -2,7 +2,26 @@
 using System.Runtime.CompilerServices;
 
 namespace BEngine
-{   
+{
+    public struct Vector2
+    {
+        public float x, y;
+
+        public Vector2(float x, float y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        public override string ToString()
+        {
+            string vectorX = string.Format(CultureInfo.InvariantCulture, "{0:F2}", x);
+            string vectorY = string.Format(CultureInfo.InvariantCulture, "{0:F2}", y);
+
+            return $"Vector2 ({vectorX};{vectorY})";
+        }
+    }
+
     public struct Vector3
     {
         public float x, y, z;
@@ -26,9 +45,9 @@ namespace BEngine
 
     public class Logger
     {
-        public static void Print(Vector3 vector)
+        public static void Print(object value)
         {
-            InternalCalls.Log(vector.ToString());
+            InternalCalls.Log(value.ToString());
         }
     }
 
