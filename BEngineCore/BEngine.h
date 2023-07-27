@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iostream>
 #include "glm/vec3.hpp"
+#include "ecs/entt.hpp"
 
 namespace BEngine 
 {
@@ -26,8 +27,4 @@ namespace BEngine
 	{
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
-
-	int add(int a, int b);
-	int test();
-	void untest();
 }
