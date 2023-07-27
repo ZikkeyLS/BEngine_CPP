@@ -1,5 +1,6 @@
 ﻿#include "BEngineEditor.h"
-#include "BEngine.h"
+#include "Window.h"
+#include "EditorWindow.h"
 #include <filesystem>
 
 #ifndef NDEBUG
@@ -25,10 +26,13 @@ int main()
 		std::filesystem::current_path(path);
 #endif
 
-	cout << "Hello CMake." << endl;
-	cout << BEngine::add(10220, 100) << endl;
+	BEngine::Window window;
+	window.Initialize(BEngine::WindowSize { 700, 700 }, "BEngine-Test");
+	window.Run();
 
-	BEngine::test();
-	BEngine::untest();
+	BEngineEditor::EditorWindow editorWindow;
+	editorWindow.Initialize(BEngine::WindowSize { 640, 480 }, "BEngine-Editor");
+	editorWindow.Run();
+
 	return 0;
 }

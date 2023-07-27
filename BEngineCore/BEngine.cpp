@@ -10,17 +10,16 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-int BEngine::add(int a, int b)
+int add(int a, int b)
 {
 	return a + b;
 }
 
-int BEngine::test()
+int test()
 {
-    ScriptEngine::Initialize();
+    BEngine::ScriptEngine::Initialize();
 
     GLFWwindow* window;
-    BE_ASSERT(true);
 
     if (!glfwInit())
         return -1;
@@ -115,7 +114,7 @@ int BEngine::test()
     return 0;
 }
 
-void BEngine::untest()
+void untest()
 {
-    ScriptEngine::Shutdown();
+    BEngine::ScriptEngine::Shutdown();
 }

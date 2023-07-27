@@ -13,6 +13,7 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(BEngineCore)
 add_subdirectory(BEngineScriptCore)
+add_subdirectory(BEngineClient)
 add_subdirectory(BEngineEditor)
 
 add_subdirectory(external/glfw)
