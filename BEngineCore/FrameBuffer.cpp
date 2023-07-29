@@ -1,5 +1,10 @@
 #include "FrameBuffer.h"
 
+FrameBuffer::FrameBuffer()
+{
+
+}
+
 FrameBuffer::FrameBuffer(float width, float height)
 {
 	glGenFramebuffers(1, &fbo);

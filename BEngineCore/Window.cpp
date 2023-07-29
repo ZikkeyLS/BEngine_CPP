@@ -14,6 +14,8 @@ namespace BEngine
         if (!glfwInit())
             return -1;
 
+        this->size = size;
+
         window = glfwCreateWindow(size.x, size.y, name.c_str(), NULL, NULL);
         if (!window)
         {
@@ -41,8 +43,6 @@ namespace BEngine
         
         while (!glfwWindowShouldClose(window))
         {
-            glClear(GL_COLOR_BUFFER_BIT);
-
             OnUpdate();
 
             glfwSwapBuffers(window);

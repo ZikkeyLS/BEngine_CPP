@@ -6,6 +6,7 @@
 #ifndef NDEBUG
 #include <string>
 #include <windows.h>
+#include <BEngine.h>
 
 std::string getpath()
 {
@@ -25,10 +26,6 @@ int main()
 	if (std::filesystem::current_path() != path)
 		std::filesystem::current_path(path);
 #endif
-
-	BEngine::Window window;
-	window.Initialize(BEngine::WindowSize { 700, 700 }, "BEngine-Test");
-	window.Run();
 
 	BEngineEditor::EditorWindow editorWindow;
 	editorWindow.Initialize(BEngine::WindowSize { 640, 480 }, "BEngine-Editor");

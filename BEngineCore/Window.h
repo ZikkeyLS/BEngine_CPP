@@ -6,6 +6,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <FrameBuffer.h>
 
 namespace BEngine
 {
@@ -29,7 +30,6 @@ namespace BEngine
 
 		GLFWwindow* window = nullptr;
 		WindowSize size = WindowSize{ 0, 0 };
-		ImGuiContext* uiContext;
 	private:
 
 	};

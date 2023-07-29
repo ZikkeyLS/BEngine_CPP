@@ -10,7 +10,6 @@
 #include <fstream>
 #include <iostream>
 #include "glm/vec3.hpp"
-#include "ecs/entt.hpp"
 
 namespace BEngine 
 {
