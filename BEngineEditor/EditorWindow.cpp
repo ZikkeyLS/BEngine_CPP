@@ -8,6 +8,18 @@
 
 namespace BEngineEditor 
 {
+    unsigned int shaderProgram;
+    unsigned int vertexShader;
+    unsigned int fragmentShader;
+
+    unsigned int VBO;
+    unsigned int VAO;
+
+    float vertices[] = {
+         -0.5f, -0.5f, 0.0f,
+          0.5f, -0.5f, 0.0f,
+          0.0f,  0.5f, 0.0f
+    };
 
     void EditorWindow::OnInitialize()
     {
@@ -21,7 +33,53 @@ namespace BEngineEditor
         ImGui::StyleColorsDark();
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init("#version 460");
-        sceneBuffer = new FrameBuffer(640, 480);
+
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+
+        #pragma region DemoTriangleSetup
+
+        const char* vertexShaderSource = "#version 330 core\n"
+            "layout (location = 0) in vec3 aPos;\n"
+            "void main()\n"
+            "{\n"
+            "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+            "}\0";
+
+
+        const char* fragmentShaderSource = "#version 330 core\n"
+            "out vec4 FragColor;\n"
+            "void main()\n"
+            "{\n"
+            "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+            "}\0";
+
+        glGenBuffers(1, &VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glGenVertexArrays(1, &VAO);
+        glBindVertexArray(VAO);
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+        vertexShader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+        glCompileShader(vertexShader);
+
+        fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+        glCompileShader(fragmentShader);
+
+        shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, fragmentShader);
+        glLinkProgram(shaderProgram);
+#pragma endregion
+
+        sceneBuffer = new FrameBuffer(width, height);
+        gameBuffer = new FrameBuffer(width, height);
     }
 
     int time = 0;
@@ -37,8 +95,27 @@ namespace BEngineEditor
 
     void EditorWindow::OnUpdate()
     {
-        glClearColor(0, 1, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        sceneBuffer->Bind();
+        glClearColor(1, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        sceneBuffer->Unbind();
+
+        gameBuffer->Bind();
+        glClearColor(0, 0, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        gameBuffer->Unbind();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -53,6 +130,9 @@ namespace BEngineEditor
         {
             float width = ImGui::GetContentRegionAvail().x;
             float height = ImGui::GetContentRegionAvail().y;
+
+            // Think about rescaling framebuffers.
+            sceneBuffer->RescaleFrameBuffer(width, height);
 
             ImGui::Image(
                 (ImTextureID)sceneBuffer->getFrameTexture(),
@@ -69,8 +149,11 @@ namespace BEngineEditor
             float width = ImGui::GetContentRegionAvail().x;
             float height = ImGui::GetContentRegionAvail().y;
 
+            // Think about rescaling framebuffers.
+            gameBuffer->RescaleFrameBuffer(width, height);
+
             ImGui::Image(
-                (ImTextureID)sceneBuffer->getFrameTexture(),
+                (ImTextureID)gameBuffer->getFrameTexture(),
                 ImGui::GetContentRegionAvail(),
                 ImVec2(0, 1),
                 ImVec2(1, 0)
@@ -80,11 +163,6 @@ namespace BEngineEditor
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        sceneBuffer->Bind();
-        glClearColor(1, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-        sceneBuffer->Unbind();
     }
 
     void EditorWindow::OnDestroy() 
@@ -92,6 +170,10 @@ namespace BEngineEditor
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
+
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+        glDeleteProgram(shaderProgram);
 
         delete sceneBuffer;
     }
