@@ -1,7 +1,6 @@
 #include "EditorWindow.h"
 #include "BEngine.h"
 #include "FrameBuffer.h"
-
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -14,7 +13,11 @@ namespace BEngineEditor
     {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        ImGuiIO& io = ImGui::GetIO();
+#ifdef NDEBUG
+        io.IniFilename = "BEngineEditorGUI.ini";
+#endif
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         ImGui::StyleColorsDark();
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init("#version 460");
@@ -41,10 +44,28 @@ namespace BEngineEditor
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        ImGuiID dockspaceID = ImGui::GetID("BEngineDockspace");
+        ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+        ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), dockspaceFlags);
+        ImGui::DockSpaceOverViewport();
+
         ImGui::Begin("Scene");
         {
-            ImGui::BeginChild("GameRender");
+            float width = ImGui::GetContentRegionAvail().x;
+            float height = ImGui::GetContentRegionAvail().y;
 
+            ImGui::Image(
+                (ImTextureID)sceneBuffer->getFrameTexture(),
+                ImGui::GetContentRegionAvail(),
+                ImVec2(0, 1),
+                ImVec2(1, 0)
+            );
+
+        }
+        ImGui::End();
+
+        ImGui::Begin("Game");
+        {
             float width = ImGui::GetContentRegionAvail().x;
             float height = ImGui::GetContentRegionAvail().y;
 
@@ -55,7 +76,6 @@ namespace BEngineEditor
                 ImVec2(1, 0)
             );
         }
-        ImGui::EndChild();
         ImGui::End();
 
         ImGui::Render();
