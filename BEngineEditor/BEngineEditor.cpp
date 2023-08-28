@@ -28,7 +28,7 @@ int main()
 #endif
 
 	BEngineEditor::EditorWindow editorWindow;
-	editorWindow.Initialize(BEngine::WindowSize { 640, 480 }, "BEngine-Editor");
+	editorWindow.Initialize("BEngine-Editor", BEngine::WindowSize { 1280, 720 });
 	editorWindow.Run();
 
 	return 0;

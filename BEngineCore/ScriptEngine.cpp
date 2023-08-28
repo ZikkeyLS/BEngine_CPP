@@ -104,9 +104,9 @@ namespace BEngine {
 
 		ScriptGlue::Register();
 
-		//MonoObject* instance = s_Data->EntityClass.Instantiate();
-		//MonoMethod* printVector = s_Data->EntityClass.GetMethod("PrintVector", 0);
-		//s_Data->EntityClass.Invoke(instance, printVector, nullptr);
+		/*MonoObject* instance = s_Data->EntityClass.Instantiate();
+		MonoMethod* printVector = s_Data->EntityClass.GetMethod("PrintVector", 0);
+		s_Data->EntityClass.Invoke(instance, printVector, nullptr);*/
 	}
 
 	void ScriptEngine::Shutdown()

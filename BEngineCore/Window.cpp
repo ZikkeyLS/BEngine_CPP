@@ -9,28 +9,20 @@ namespace BEngine
 
     }
 
-    int Window::Initialize(WindowSize size, std::string name)
+    int Window::Initialize(const std::string& name, const WindowSize& size)
 	{
-        if (!glfwInit())
-            return -1;
-
-        this->size = size;
-
-        window = glfwCreateWindow(size.x, size.y, name.c_str(), NULL, NULL);
-        if (!window)
+        if (SDL_Init(SDL_INIT_EVERYTHING) != 0) 
         {
-            glfwTerminate();
-            return -1;
+            BE_ERROR("SDL_Init Error: {}", SDL_GetError());
+            return 1;
         }
 
-        glfwMakeContextCurrent(window);
-
-        if (!gladLoadGL()) {
-            BE_ERROR("Can't load GLAD!");
-            return -1;
+        window = CreateWindow("BEngine", size);
+        if (window == nullptr)
+        {
+            BE_ERROR("SDL_CreateWindow Error: {}", SDL_GetError());
+            return 1;
         }
-
-        BE_INFO("OpenGL {}.{}", GLVersion.major, GLVersion.minor);
 
         OnInitialize();
 
@@ -40,17 +32,28 @@ namespace BEngine
     void Window::Run()
     {
         OnStart();
-        
-        while (!glfwWindowShouldClose(window))
-        {
-            OnUpdate();
 
-            glfwSwapBuffers(window);
-            glfwPollEvents();
+        SDL_Event windowEvent;
+        bool running = true;
+        while (running)
+        {
+            while (SDL_PollEvent(&windowEvent) != 0)
+            {
+                OnWindowEvent(&windowEvent);
+
+                if (windowEvent.type == SDL_QUIT)
+                {
+                    running = false;
+                }
+            }
+
+            OnUpdate();
         }
 
         OnDestroy();
 
-        glfwTerminate();
+        SDL_DestroyWindow(window);
+        window = nullptr;
+        SDL_Quit();
     }
 }

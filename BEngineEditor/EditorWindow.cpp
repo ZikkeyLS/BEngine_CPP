@@ -2,81 +2,36 @@
 #include "BEngine.h"
 #include "FrameBuffer.h"
 #include <imgui.h>
-#include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <chrono>
 
 namespace BEngineEditor 
 {
-    unsigned int shaderProgram;
-    unsigned int vertexShader;
-    unsigned int fragmentShader;
-
-    unsigned int VBO;
-    unsigned int VAO;
-
-    float vertices[] = {
-         -0.5f, -0.5f, 0.0f,
-          0.5f, -0.5f, 0.0f,
-          0.0f,  0.5f, 0.0f
-    };
-
     void EditorWindow::OnInitialize()
     {
+        BEngine::ScriptEngine::Initialize();
+
+        context = SDL_GL_CreateContext(window);
+
+        if (!gladLoadGL())
+        {
+            BE_ERROR("Can't load GLAD!");
+            return;
+        }
+
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
 #ifdef NDEBUG
         io.IniFilename = "BEngineEditorGUI.ini";
 #endif
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         ImGui::StyleColorsDark();
-        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplSDL2_InitForOpenGL(window, context);
         ImGui_ImplOpenGL3_Init("#version 460");
 
         int width, height;
-        glfwGetWindowSize(window, &width, &height);
-
-        #pragma region DemoTriangleSetup
-
-        const char* vertexShaderSource = "#version 330 core\n"
-            "layout (location = 0) in vec3 aPos;\n"
-            "void main()\n"
-            "{\n"
-            "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-            "}\0";
-
-
-        const char* fragmentShaderSource = "#version 330 core\n"
-            "out vec4 FragColor;\n"
-            "void main()\n"
-            "{\n"
-            "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-            "}\0";
-
-        glGenBuffers(1, &VBO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glGenVertexArrays(1, &VAO);
-        glBindVertexArray(VAO);
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-        vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-        glCompileShader(vertexShader);
-
-        fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-        glCompileShader(fragmentShader);
-
-        shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);
-#pragma endregion
+        SDL_GetWindowSize(window, &width, &height);
 
         sceneBuffer = new FrameBuffer(width, height);
         gameBuffer = new FrameBuffer(width, height);
@@ -87,40 +42,77 @@ namespace BEngineEditor
     std::chrono::steady_clock::time_point previousFrame;
 
     void EditorWindow::OnStart()
-    {
+    {  
         time = 0;
         framesPerSecond = 0;
         previousFrame = std::chrono::high_resolution_clock::now();
+    }
+
+    void EditorWindow::OnWindowEvent(SDL_Event* windowEvent)
+    {
+        ImGui_ImplSDL2_ProcessEvent(windowEvent);
     }
 
     void EditorWindow::OnUpdate()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        OnRender();
+        OnGUI();
+
+        SDL_GL_SwapWindow(window);
+    }
+
+    void EditorWindow::OnDestroy() 
+    {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplSDL2_Shutdown();
+        ImGui::DestroyContext();
+
+        delete sceneBuffer;
+        delete gameBuffer;
+
+        SDL_GL_DeleteContext(context);
+    }
+
+    SDL_Window* EditorWindow::CreateWindow(const std::string& name, const WindowSize& size)
+    {
+        return SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size.x, size.y, 
+            SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_OPENGL);
+    }
+
+    void EditorWindow::OnRender()
+    {
         sceneBuffer->Bind();
         glClearColor(1, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
         sceneBuffer->Unbind();
 
         gameBuffer->Bind();
         glClearColor(0, 0, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
         gameBuffer->Unbind();
+    }
 
+    void EditorWindow::OnGUI()
+    {
         ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
+        OnProjectGUI();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
+
+    void EditorWindow::OnLoaderGUI()
+    {
+
+    }
+
+    void EditorWindow::OnProjectGUI()
+    {
         ImGuiID dockspaceID = ImGui::GetID("BEngineDockspace");
         ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
         ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), dockspaceFlags);
@@ -160,21 +152,5 @@ namespace BEngineEditor
             );
         }
         ImGui::End();
-
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    }
-
-    void EditorWindow::OnDestroy() 
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-        glDeleteProgram(shaderProgram);
-
-        delete sceneBuffer;
     }
 }
