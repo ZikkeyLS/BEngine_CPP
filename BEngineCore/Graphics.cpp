@@ -91,7 +91,7 @@ namespace BEngine {
 		deviceContext->OMSetRenderTargets(1, &renderTargetView, NULL);
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-		swapChain->Present(0, NULL);
+		swapChain->Present(0, 0);
 	}
 
 	void DX11Graphics::Destroy()

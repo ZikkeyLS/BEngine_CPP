@@ -81,11 +81,10 @@ namespace BEngineEditor
         ImGuiID dockspaceID = ImGui::GetID("BEngineDockspace");
         ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
         ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), dockspaceFlags);
-        ImGui::DockSpaceOverViewport();
 
         ImGui::Begin("Test123");
         {
-            ImGui::Text("JOPA NEGRA D3DXXX!!");
+            ImGui::Text("Test :(");
         }
         ImGui::End();
     }
