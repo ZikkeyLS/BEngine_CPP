@@ -17,7 +17,7 @@ namespace BEngine
             return 1;
         }
 
-        window = CreateWindow("BEngine", size);
+        window = CreateWindowInstance("BEngine", size);
         if (window == nullptr)
         {
             BE_ERROR("SDL_CreateWindow Error: {}", SDL_GetError());

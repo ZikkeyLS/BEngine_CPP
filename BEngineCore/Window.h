@@ -29,7 +29,7 @@ namespace BEngine
 		virtual void OnUpdate() { }
 		virtual void OnDestroy() { }
 
-		virtual SDL_Window* CreateWindow(const std::string& name, const WindowSize& size) 
+		virtual SDL_Window* CreateWindowInstance(const std::string& name, const WindowSize& size) 
 		{ 
 			return SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 				size.x, size.y, SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
