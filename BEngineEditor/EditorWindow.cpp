@@ -11,8 +11,7 @@ namespace BEngineEditor
     {
         BEngine::ScriptEngine::Initialize();
 
-        graphics = new DX11Graphics();
-
+        graphics = new OpenGLGraphics();
         graphics->Initialize(window);
 
         int width, height;
@@ -55,8 +54,8 @@ namespace BEngineEditor
     {
         graphics->Destroy();
 
-        // delete sceneBuffer;
-        // delete gameBuffer;
+        delete sceneBuffer;
+        delete gameBuffer;
     }
 
     SDL_Window* EditorWindow::CreateWindowInstance(const std::string& name, const WindowSize& size)
