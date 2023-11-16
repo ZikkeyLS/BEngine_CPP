@@ -8,6 +8,21 @@ add_library(BEngineCore STATIC ${BEngineCoreSources})
 set_target_properties(BEngineCore PROPERTIES
 		      FOLDER "BEngine")
 
+set(core
+	"BEngine.h")
+source_group("Core" FILES ${core})
+
+set(scripting
+	"ScriptEngine.h" "ScriptEngine.cpp"
+    "ScriptGlue.h" "ScriptGlue.cpp")
+source_group("Scripting" FILES ${scripting})
+
+set(graphics
+	"Window.h" "Window.cpp"
+    "Graphics.h" "Graphics.cpp"
+	"FrameBuffer.h" "FrameBuffer.cpp")
+source_group("Graphics" FILES ${graphics})
+
 target_include_directories(BEngineCore PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 
 if (WIN32)
