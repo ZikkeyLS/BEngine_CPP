@@ -42,6 +42,8 @@ namespace BEngine
 		virtual void Destroy() { }
 		virtual void PreUI() { }
 		virtual void PostUI() { }
+
+		virtual FrameBuffer* CreateFrameBuffer(int width, int height) { return new FrameBuffer(width, height); }
 	protected:
 		SDL_Window* window;
 		std::vector<GraphicsContext*> contexts;
@@ -56,6 +58,8 @@ namespace BEngine
 		virtual void PreUI() override;
 		virtual void PostUI() override;
 		virtual void Destroy() override;
+
+		virtual FrameBuffer* CreateFrameBuffer(int width, int height) { return new FrameBufferDX11(width, height); }
 	private:
 		IDXGISwapChain* swapChain;
 		ID3D11Device* device;
@@ -83,6 +87,8 @@ namespace BEngine
 		virtual void PreUI() override;
 		virtual void PostUI() override;
 		virtual void Destroy() override;
+
+		virtual FrameBuffer* CreateFrameBuffer(int width, int height) { return new FrameBufferGL(width, height); }
 	private:
 		SDL_GLContext context;
 	};

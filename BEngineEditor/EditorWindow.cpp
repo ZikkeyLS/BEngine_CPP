@@ -15,12 +15,11 @@ namespace BEngineEditor
 
         graphics->Initialize(window);
 
-        /*
         int width, height;
         SDL_GetWindowSize(window, &width, &height);
 
-        sceneBuffer = new FrameBuffer(width, height);
-        gameBuffer = new FrameBuffer(width, height);
+        sceneBuffer = graphics->CreateFrameBuffer(width, height);
+        gameBuffer = graphics->CreateFrameBuffer(width, height);
 
         GraphicsContext* main = new GraphicsContext();
         main->bufferColor = glm::vec4(0, 0, 0, 1);
@@ -34,8 +33,6 @@ namespace BEngineEditor
         graphics->AddGraphicsContext(main);
         graphics->AddGraphicsContext(scene);
         graphics->AddGraphicsContext(game);
-        */
-
     }
 
     void EditorWindow::OnStart()
@@ -71,8 +68,8 @@ namespace BEngineEditor
     void EditorWindow::OnGUI()
     {
         graphics->PreUI();
-        //OnProjectGUI();
-        OnLoaderGUI();
+        OnProjectGUI();
+        //OnLoaderGUI();
         graphics->PostUI();
     }
 
