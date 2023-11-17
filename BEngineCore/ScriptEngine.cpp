@@ -1,5 +1,5 @@
 #include "ScriptEngine.h"
-#include "ScriptGlue.h"
+#include "ScriptLinker.h"
 
 namespace BEngine {
 
@@ -102,7 +102,7 @@ namespace BEngine {
 		LoadAssembly("BEngineScriptCore.dll");
 		LoadAssemblyClasses(s_Data->CoreAssembly);
 
-		ScriptGlue::Register();
+		ScriptLinker::Register();
 
 		/*MonoObject* instance = s_Data->EntityClass.Instantiate();
 		MonoMethod* printVector = s_Data->EntityClass.GetMethod("PrintVector", 0);

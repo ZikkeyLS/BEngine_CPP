@@ -14,7 +14,7 @@ source_group("Core" FILES ${core})
 
 set(scripting
 	"ScriptEngine.h" "ScriptEngine.cpp"
-    "ScriptGlue.h" "ScriptGlue.cpp")
+    "ScriptLinker.h" "ScriptLinker.cpp")
 source_group("Scripting" FILES ${scripting})
 
 set(graphics

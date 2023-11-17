@@ -3,7 +3,7 @@
 
 namespace BEngine {
 
-	class ScriptGlue {
+	class ScriptLinker {
 	public:
 		static void Register();
 	};
